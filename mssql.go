@@ -33,11 +33,12 @@ func CheckBadConn(err error) error {
 	if err == io.EOF {
 		return driver.ErrBadConn
 	}
-	neterr, ok := err.(net.Error)
-	if !ok || (!neterr.Timeout() && neterr.Temporary()) {
+	switch err.(type) {
+	case net.Error:
+		return driver.ErrBadConn
+	default:
 		return err
 	}
-	return driver.ErrBadConn
 }
 
 type MssqlConn struct {
